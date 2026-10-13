@@ -9,10 +9,18 @@ export function getTip(m) {
       return { level: "warning", text: "Glicemia baixa. Consuma 15 g de açúcar rápido (meio copo de suco comum) e meça de novo em 15 minutos." };
     if (g >= 250)
       return { level: "danger", text: "Glicemia muito alta. Procure atendimento médico, principalmente se tiver sede intensa, náusea, vômito ou mal-estar." };
-    if (g >= 126)
-      return { level: "warning", text: "Glicemia alta. Beba água, evite doces e carboidratos simples. Se continuar alta, procure acompanhamento médico." };
-    if (g >= 100)
-      return { level: "info", text: "Acima do ideal em jejum. Se foi medida depois de comer, até 140 é esperado. Se repetir em jejum, converse com seu médico." };
+    const fasting = !m.context || m.context === "jejum";
+    if (fasting) {
+      if (g >= 126)
+        return { level: "warning", text: "Glicemia alta em jejum. Beba água, evite doces e carboidratos simples. Se repetir, procure acompanhamento médico." };
+      if (g >= 100)
+        return { level: "info", text: "Um pouco acima do ideal em jejum. Se repetir, converse com seu médico." };
+    } else {
+      if (g >= 200)
+        return { level: "warning", text: "Glicemia alta após refeição. Beba água e evite doces. Se repetir com frequência, procure acompanhamento médico." };
+      if (g >= 140)
+        return { level: "info", text: "Um pouco acima do esperado após refeição. Vale observar o que comeu e continuar acompanhando." };
+    }
   }
 
   if (m.type === "pressao") {

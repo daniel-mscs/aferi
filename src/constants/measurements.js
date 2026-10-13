@@ -40,9 +40,18 @@ export function classifyBMI(bmi) {
   return { label: "Obesidade", status: "out-of-range" };
 }
 
-export function getReference(type, profile) {
+export function getReference(type, profile, context) {
   const base = MEASUREMENT_TYPES[type].reference;
   if (!base) return null;
+  if (type === "glicemia" && context && context !== "jejum") {
+    return profile?.ranges?.[`glicemia_${context}`] ?? GLUCOSE_CONTEXTS[context].reference;
+  }
   const custom = profile?.ranges?.[type];
   return custom ? { ...base, ...custom } : base;
 }
+
+export const GLUCOSE_CONTEXTS = {
+  jejum: { label: "Jejum", reference: { value: { min: 70, max: 99 } } },
+  pos: { label: "Pós-refeição", reference: { value: { min: 70, max: 139 } } },
+  aleatoria: { label: "Aleatória", reference: { value: { min: 70, max: 139 } } },
+};

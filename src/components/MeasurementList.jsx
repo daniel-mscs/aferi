@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MEASUREMENT_TYPES, getReference } from "../constants/measurements";
+import { MEASUREMENT_TYPES, GLUCOSE_CONTEXTS, getReference } from "../constants/measurements";
 import { getTip } from "../constants/tips";
 
 function formatValues(m) {
@@ -8,7 +8,7 @@ function formatValues(m) {
 }
 
 function getStatus(m, config, profile) {
-  const reference = getReference(m.type, profile);
+  const reference = getReference(m.type, profile, m.context);
   if (!reference) return "";
   const outOfRange = config.fields.some((f) => {
     const { min, max } = reference[f];
@@ -33,11 +33,14 @@ export default function MeasurementList({ measurements, onDelete, profile }) {
       {measurements.map((m) => {
         const config = MEASUREMENT_TYPES[m.type];
         const status = getStatus(m, config, profile);
-        const tip = getTip(m);
+        const tip = status === "in-range" ? null : getTip(m);
         return (
           <li key={m.id} className="history-item">
             <div className="history-main">
-              <span className="history-label">{config.label}</span>
+              <span className="history-label">
+                {config.label}
+                {m.context && ` · ${GLUCOSE_CONTEXTS[m.context].label}`}
+              </span>
               <span className={`history-value ${status}`}>
                 {formatValues(m)} <small>{config.unit}</small>
               </span>

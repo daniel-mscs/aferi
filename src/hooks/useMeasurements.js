@@ -36,10 +36,11 @@ export function useMeasurements() {
     return unsubscribe;
   }, [user]);
 
-  const addMeasurement = ({ type, values, date, note }) =>
+  const addMeasurement = ({ type, values, date, note, context }) =>
     addDoc(collection(db, "users", user.uid, "measurements"), {
       type,
       values,
+      context: context || null,
       date: Timestamp.fromDate(date),
       note: note || "",
       createdAt: serverTimestamp(),

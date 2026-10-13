@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MEASUREMENT_TYPES } from "../constants/measurements";
+import { MEASUREMENT_TYPES, GLUCOSE_CONTEXTS } from "../constants/measurements";
 
 const FIELD_LABELS = {
   value: "Valor",
@@ -18,6 +18,7 @@ export default function MeasurementForm({ onSave }) {
   const [values, setValues] = useState({});
   const [date, setDate] = useState(nowLocal());
   const [note, setNote] = useState("");
+  const [context, setContext] = useState("jejum");
   const [saving, setSaving] = useState(false);
 
   const config = MEASUREMENT_TYPES[type];
@@ -33,6 +34,10 @@ export default function MeasurementForm({ onSave }) {
       alert("A data não pode ser no futuro.");
       return;
     }
+    if (Object.values(values).some((v) => Number(v) <= 0)) {
+      alert("Os valores precisam ser maiores que zero.");
+      return;
+    }
     setSaving(true);
     const numericValues = Object.fromEntries(
       Object.entries(values).map(([k, v]) => {
@@ -41,7 +46,13 @@ export default function MeasurementForm({ onSave }) {
         return [k, n];
       })
     );
-    await onSave({ type, values: numericValues, date: new Date(date), note });
+    await onSave({
+      type,
+      values: numericValues,
+      date: new Date(date),
+      note,
+      context: type === "glicemia" ? context : null,
+    });
     setValues({});
     setNote("");
     setDate(nowLocal());
@@ -56,6 +67,21 @@ export default function MeasurementForm({ onSave }) {
         ))}
       </select>
 
+      {type === "glicemia" && (
+        <div className="chips">
+          {Object.entries(GLUCOSE_CONTEXTS).map(([key, c]) => (
+            <button
+              key={key}
+              type="button"
+              className={`chip ${context === key ? "active" : ""}`}
+              onClick={() => setContext(key)}
+            >
+              {c.label}
+            </button>
+          ))}
+        </div>
+      )}
+
       {config.fields.map((field) => (
         <label key={field} className="field">
           {FIELD_LABELS[field]} ({config.unit})
@@ -63,7 +89,9 @@ export default function MeasurementForm({ onSave }) {
             type="number"
             inputMode="decimal"
             step="any"
+            min="1"
             required
+            onKeyDown={(e) => ["-", "+", "e", "E"].includes(e.key) && e.preventDefault()}
             value={values[field] ?? ""}
             onChange={(e) => setValues({ ...values, [field]: e.target.value })}
           />

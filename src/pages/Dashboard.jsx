@@ -5,6 +5,7 @@ import MeasurementChart from "../components/MeasurementChart";
 import BuyMeCoffee from "../components/BuyMeCoffee";
 import BMICard from "../components/BMICard";
 import InstallPrompt from "../components/InstallPrompt";
+import RangesSettings from "../components/RangesSettings";
 import { useProfile } from "../hooks/useProfile";
 import { useMeasurements } from "../hooks/useMeasurements";
 import MeasurementForm from "../components/MeasurementForm";
@@ -60,6 +61,7 @@ export default function Dashboard() {
       </select>
 
       <MeasurementChart measurements={measurements} type={chartType} profile={profile} />
+      <RangesSettings profile={profile} onSave={(ranges) => updateProfile({ ranges })} />
       </section>
 
       <section className="card">

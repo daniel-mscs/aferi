@@ -379,3 +379,27 @@ textarea:focus {
   color: var(--primary-text);
   font-weight: 600;
 }
+
+.ranges-modal {
+  max-height: 85dvh;
+  overflow-y: auto;
+  text-align: left;
+}
+
+.range-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.range-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.range-label {
+  min-width: 72px;
+}
