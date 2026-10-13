@@ -41,7 +41,7 @@ export default function MeasurementForm({ onSave }) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form className="form" onSubmit={handleSubmit}>
       <select value={type} onChange={handleTypeChange}>
         {Object.entries(MEASUREMENT_TYPES).map(([key, t]) => (
           <option key={key} value={key}>{t.label}</option>
@@ -49,7 +49,7 @@ export default function MeasurementForm({ onSave }) {
       </select>
 
       {config.fields.map((field) => (
-        <label key={field}>
+        <label key={field} className="field">
           {FIELD_LABELS[field]} ({config.unit})
           <input
             type="number"
@@ -75,7 +75,7 @@ export default function MeasurementForm({ onSave }) {
         onChange={(e) => setNote(e.target.value)}
       />
 
-      <button type="submit" disabled={saving}>
+      <button type="submit" className="btn-primary" disabled={saving}>
         {saving ? "Salvando..." : "Registrar"}
       </button>
     </form>

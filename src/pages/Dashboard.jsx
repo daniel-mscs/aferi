@@ -12,21 +12,30 @@ export default function Dashboard() {
   const [chartType, setChartType] = useState("glicemia");
 
   return (
-    <div style={{ maxWidth: 480, margin: "0 auto", padding: 16 }}>
-      <header>
-        <span>Olá, {user.displayName}</span>
-        <button onClick={logout}>Sair</button>
+    <div className="container">
+      <header className="app-header">
+        <div>
+          <h1 className="logo">Aferi</h1>
+          <span className="muted">Olá, {user.displayName?.split(" ")[0]} 👋</span>
+        </div>
+        <button className="btn-ghost" onClick={logout}>Sair</button>
       </header>
 
-      <MeasurementForm onSave={addMeasurement} />
+      <section className="card">
+        <h2 className="section-title">Nova medição</h2>
+        <MeasurementForm onSave={addMeasurement} />
+      </section>
 
-      <select value={chartType} onChange={(e) => setChartType(e.target.value)}>
+      <section className="card">
+      <h2 className="section-title">Evolução</h2>
+      <select className="chart-select" value={chartType} onChange={(e) => setChartType(e.target.value)}>
         {Object.entries(MEASUREMENT_TYPES).map(([key, t]) => (
           <option key={key} value={key}>{t.label}</option>
         ))}
       </select>
 
       <MeasurementChart measurements={measurements} type={chartType} />
+      </section>
 
       <MeasurementList measurements={measurements} onDelete={deleteMeasurement} />
     </div>
