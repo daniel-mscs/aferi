@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { MEASUREMENT_TYPES, GLUCOSE_CONTEXTS, getReference } from "../constants/measurements";
+import {
+  MEASUREMENT_TYPES,
+  GLUCOSE_CONTEXTS,
+  getReference,
+  calcBMI,
+  classifyBMI,
+} from "../constants/measurements";
 import { getTip } from "../constants/tips";
 import MeasurementForm from "./MeasurementForm";
 
@@ -9,6 +15,10 @@ function formatValues(m) {
 }
 
 function getStatus(m, config, profile) {
+  if (m.type === "peso") {
+    const bmi = calcBMI(m.values.value, profile?.height);
+    return bmi ? classifyBMI(bmi).status : "";
+  }
   const reference = getReference(m.type, profile, m.context);
   if (!reference) return "";
   const outOfRange = config.fields.some((f) => {
@@ -36,6 +46,7 @@ export default function MeasurementList({ measurements, onDelete, onUpdate, prof
         const config = MEASUREMENT_TYPES[m.type];
         const status = getStatus(m, config, profile);
         const tip = status === "in-range" ? null : getTip(m);
+        const bmi = m.type === "peso" ? calcBMI(m.values.value, profile?.height) : null;
         return (
           <li key={m.id} className="history-item">
             <div className="history-main">
@@ -46,6 +57,11 @@ export default function MeasurementList({ measurements, onDelete, onUpdate, prof
               <span className={`history-value ${status}`}>
                 {formatValues(m)} <small>{config.unit}</small>
               </span>
+              {bmi && (
+                <span className="muted">
+                  IMC {bmi.toFixed(1).replace(".", ",")} · {classifyBMI(bmi).label}
+                </span>
+              )}
               <span className="muted">
                 {m.date.toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}
                 {m.pending && " · ⏳ aguardando sincronizar"}
