@@ -22,16 +22,17 @@ const FIELD_LABELS = {
   diastolic: "Diastólica",
 };
 
-export default function MeasurementChart({ measurements, type, profile, context }) {
+export default function MeasurementChart({ measurements, type, profile, context, days }) {
   const config = MEASUREMENT_TYPES[type];
   const isGlucose = type === "glicemia";
   const reference = getReference(type, profile, isGlucose ? context : undefined);
 
   const data = measurements
     .filter((m) => m.type === type && (!isGlucose || (m.context || "jejum") === context))
+    .filter((m) => !days || m.date >= new Date(Date.now() - days * 86400000))
     .sort((a, b) => a.date - b.date)
     .map((m) => ({
-      date: m.date.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }),
+      timestamp: m.date.getTime(),
       ...m.values,
     }));
 
@@ -47,11 +48,23 @@ export default function MeasurementChart({ measurements, type, profile, context 
     <ResponsiveContainer width="100%" height={250}>
       <LineChart data={data} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
         <CartesianGrid strokeDasharray="3 3" stroke="#333" />
-        <XAxis dataKey="date" stroke="#888" />
+        <XAxis
+          dataKey="timestamp"
+          type="number"
+          scale="time"
+          domain={[(min) => min - 43200000, (max) => max + 43200000]}
+          tickFormatter={(t) =>
+            new Date(t).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" })
+          }
+          stroke="#888"
+        />
         <YAxis stroke="#888" domain={[yMin, yMax]} />
         <Tooltip
           contentStyle={{ background: "#22262e", border: "1px solid #2c313a", borderRadius: 10 }}
           labelStyle={{ color: "#8b919c" }}
+          labelFormatter={(t) =>
+            new Date(t).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })
+          }
         />
 
         {reference &&

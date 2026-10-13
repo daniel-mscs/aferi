@@ -18,6 +18,7 @@ export default function Dashboard() {
   const { measurements, addMeasurement, deleteMeasurement, updateMeasurement } = useMeasurements();
   const [chartType, setChartType] = useState("glicemia");
   const [chartContext, setChartContext] = useState("jejum");
+  const [chartPeriod, setChartPeriod] = useState(30);
   const { profile, updateProfile } = useProfile();
   const [historyFilter, setHistoryFilter] = useState("todos");
 
@@ -76,11 +77,23 @@ export default function Dashboard() {
           ))}
         </div>
       )}
+      <div className="chips">
+        {[[7, "7 dias"], [30, "30 dias"], [90, "90 dias"], [null, "Tudo"]].map(([value, label]) => (
+          <button
+            key={label}
+            className={`chip ${chartPeriod === value ? "active" : ""}`}
+            onClick={() => setChartPeriod(value)}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
       <MeasurementChart
         measurements={measurements}
         type={chartType}
         profile={profile}
         context={chartContext}
+        days={chartPeriod}
       />
       <RangesSettings profile={profile} onSave={(ranges) => updateProfile({ ranges })} />
       </section>
