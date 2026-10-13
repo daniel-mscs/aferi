@@ -35,12 +35,18 @@ export default function MeasurementChart({ measurements, type }) {
 
   if (data.length === 0) return <p>Sem dados de {config.label.toLowerCase()} ainda.</p>;
 
+  const allValues = data.flatMap((d) => config.fields.map((f) => d[f]));
+  const refMins = config.reference ? config.fields.map((f) => config.reference[f].min) : [];
+  const refMaxs = config.reference ? config.fields.map((f) => config.reference[f].max) : [];
+  const yMin = Math.floor(Math.min(...allValues, ...refMins) * 0.9);
+  const yMax = Math.ceil(Math.max(...allValues, ...refMaxs) * 1.1);
+
   return (
     <ResponsiveContainer width="100%" height={250}>
-      <LineChart data={data}>
+      <LineChart data={data} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
         <CartesianGrid strokeDasharray="3 3" stroke="#333" />
         <XAxis dataKey="date" stroke="#888" />
-        <YAxis stroke="#888" domain={["auto", "auto"]} />
+        <YAxis stroke="#888" domain={[yMin, yMax]} />
         <Tooltip />
 
         {config.reference &&
