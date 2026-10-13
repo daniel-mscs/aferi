@@ -7,6 +7,7 @@ export const MEASUREMENT_TYPES = {
   },
   pressao: {
     label: "Pressão arterial",
+    short: "Pressão",
     unit: "mmHg",
     fields: ["systolic", "diastolic"],
     reference: {
@@ -22,6 +23,7 @@ export const MEASUREMENT_TYPES = {
   },
   frequencia: {
     label: "Frequência cardíaca",
+    short: "Freq. cardíaca",
     unit: "bpm",
     fields: ["value"],
     reference: { value: { min: 60, max: 100 } },

@@ -30,7 +30,7 @@ export default function Dashboard() {
 
   const filterOptions = [
     ["todos", "Todos"],
-    ...Object.entries(MEASUREMENT_TYPES).map(([key, t]) => [key, t.label]),
+    ...Object.entries(MEASUREMENT_TYPES).map(([key, t]) => [key, t.short ?? t.label]),
   ];
 
   return (
@@ -61,11 +61,17 @@ export default function Dashboard() {
 
       <section className="card">
       <h2 className="section-title">Evolução</h2>
-      <select className="chart-select" value={chartType} onChange={(e) => setChartType(e.target.value)}>
+      <div className="chips">
         {Object.entries(MEASUREMENT_TYPES).map(([key, t]) => (
-          <option key={key} value={key}>{t.label}</option>
+          <button
+            key={key}
+            className={`chip ${chartType === key ? "active" : ""}`}
+            onClick={() => setChartType(key)}
+          >
+            {t.short ?? t.label}
+          </button>
         ))}
-      </select>
+      </div>
 
       {chartType === "glicemia" && (
         <div className="chips">

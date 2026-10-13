@@ -135,10 +135,6 @@ textarea:focus {
   color: var(--text-muted);
 }
 
-.chart-select {
-  margin-bottom: 12px;
-}
-
 .history-item {
   display: flex;
   justify-content: space-between;
