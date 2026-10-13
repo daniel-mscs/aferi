@@ -295,3 +295,9 @@ textarea:focus {
   background: var(--danger);
   color: var(--primary-text);
 }
+
+.install-logo {
+  width: 72px;
+  height: 72px;
+  align-self: center;
+}

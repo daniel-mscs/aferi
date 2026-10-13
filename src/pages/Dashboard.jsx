@@ -4,6 +4,7 @@ import { MEASUREMENT_TYPES } from "../constants/measurements";
 import MeasurementChart from "../components/MeasurementChart";
 import BuyMeCoffee from "../components/BuyMeCoffee";
 import BMICard from "../components/BMICard";
+import InstallPrompt from "../components/InstallPrompt";
 import { useProfile } from "../hooks/useProfile";
 import { useMeasurements } from "../hooks/useMeasurements";
 import MeasurementForm from "../components/MeasurementForm";
@@ -58,6 +59,7 @@ export default function Dashboard() {
       </section>
 
       <BuyMeCoffee />
+      <InstallPrompt />
       </section>
     </div>
   );
