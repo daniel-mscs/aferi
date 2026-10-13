@@ -1,45 +1,58 @@
 import { useState } from "react";
-import { MEASUREMENT_TYPES, getReference } from "../constants/measurements";
+import { MEASUREMENT_TYPES, GLUCOSE_CONTEXTS, getReference } from "../constants/measurements";
 
 const FIELD_LABELS = { value: "", systolic: "Sistólica", diastolic: "Diastólica" };
 
-const PRESETS = {
-  glicemia: [
-    { label: "Padrão", ranges: null },
-    { label: "Sou diabético", ranges: { value: { min: 80, max: 130 } } },
-  ],
-};
+const ITEMS = [
+  { key: "glicemia", type: "glicemia", context: "jejum", label: "Glicemia em jejum" },
+  { key: "glicemia_pos", type: "glicemia", context: "pos", label: "Glicemia pós-refeição" },
+  { key: "pressao", type: "pressao", label: "Pressão arterial" },
+  { key: "frequencia", type: "frequencia", label: "Frequência cardíaca" },
+];
+
+const GLUCOSE_PRESETS = [
+  {
+    label: "Padrão",
+    ranges: {
+      glicemia: GLUCOSE_CONTEXTS.jejum.reference,
+      glicemia_pos: GLUCOSE_CONTEXTS.pos.reference,
+    },
+  },
+  {
+    label: "Sou diabético",
+    ranges: {
+      glicemia: { value: { min: 80, max: 130 } },
+      glicemia_pos: { value: { min: 80, max: 179 } },
+    },
+  },
+];
 
 export default function RangesSettings({ profile, onSave }) {
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState({});
   const [saving, setSaving] = useState(false);
 
-  const types = Object.entries(MEASUREMENT_TYPES).filter(([, t]) => t.reference);
-
   const openEditor = () => {
     const initial = {};
-    types.forEach(([key]) => {
-      initial[key] = getReference(key, profile);
+    ITEMS.forEach((item) => {
+      initial[item.key] = getReference(item.type, profile, item.context);
     });
     setDraft(initial);
     setOpen(true);
   };
 
-  const setValue = (type, field, bound, value) => {
+  const setValue = (key, field, bound, value) => {
     setDraft({
       ...draft,
-      [type]: { ...draft[type], [field]: { ...draft[type][field], [bound]: Number(value) } },
+      [key]: { ...draft[key], [field]: { ...draft[key][field], [bound]: Number(value) } },
     });
   };
 
-  const applyPreset = (type, ranges) => {
-    setDraft({ ...draft, [type]: ranges ?? MEASUREMENT_TYPES[type].reference });
-  };
+  const applyPreset = (ranges) => setDraft({ ...draft, ...ranges });
 
   const handleSave = async () => {
-    const invalid = types.some(([key, t]) =>
-      t.fields.some((f) => draft[key][f].min >= draft[key][f].max)
+    const invalid = ITEMS.some((item) =>
+      MEASUREMENT_TYPES[item.type].fields.some((f) => draft[item.key][f].min >= draft[item.key][f].max)
     );
     if (invalid) {
       alert("O valor mínimo precisa ser menor que o máximo.");
@@ -67,42 +80,45 @@ export default function RangesSettings({ profile, onSave }) {
           Use as metas que seu médico passou. Elas mudam as faixas do gráfico e as cores do histórico.
         </p>
 
-        {types.map(([key, t]) => (
-          <div key={key} className="range-group">
-            <strong>{t.label} ({t.unit})</strong>
+        {ITEMS.map((item) => {
+          const config = MEASUREMENT_TYPES[item.type];
+          return (
+            <div key={item.key} className="range-group">
+              <strong>{item.label} ({config.unit})</strong>
 
-            {PRESETS[key] && (
-              <div className="chips">
-                {PRESETS[key].map((p) => (
-                  <button key={p.label} type="button" className="chip" onClick={() => applyPreset(key, p.ranges)}>
-                    {p.label}
-                  </button>
-                ))}
-              </div>
-            )}
+              {item.key === "glicemia" && (
+                <div className="chips">
+                  {GLUCOSE_PRESETS.map((p) => (
+                    <button key={p.label} type="button" className="chip" onClick={() => applyPreset(p.ranges)}>
+                      {p.label}
+                    </button>
+                  ))}
+                </div>
+              )}
 
-            {t.fields.map((field) => (
-              <div key={field} className="range-row">
-                {FIELD_LABELS[field] && <span className="muted range-label">{FIELD_LABELS[field]}</span>}
-                <input
-                  type="number"
-                  inputMode="numeric"
-                  min="1"
-                  value={draft[key][field].min}
-                  onChange={(e) => setValue(key, field, "min", e.target.value)}
-                />
-                <span className="muted">a</span>
-                <input
-                  type="number"
-                  inputMode="numeric"
-                  min="1"
-                  value={draft[key][field].max}
-                  onChange={(e) => setValue(key, field, "max", e.target.value)}
-                />
-              </div>
-            ))}
-          </div>
-        ))}
+              {config.fields.map((field) => (
+                <div key={field} className="range-row">
+                  {FIELD_LABELS[field] && <span className="muted range-label">{FIELD_LABELS[field]}</span>}
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    min="1"
+                    value={draft[item.key][field].min}
+                    onChange={(e) => setValue(item.key, field, "min", e.target.value)}
+                  />
+                  <span className="muted">a</span>
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    min="1"
+                    value={draft[item.key][field].max}
+                    onChange={(e) => setValue(item.key, field, "max", e.target.value)}
+                  />
+                </div>
+              ))}
+            </div>
+          );
+        })}
 
         <button className="btn-primary" onClick={handleSave} disabled={saving}>
           {saving ? "Salvando..." : "Salvar metas"}

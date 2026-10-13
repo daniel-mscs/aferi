@@ -22,12 +22,13 @@ const FIELD_LABELS = {
   diastolic: "Diastólica",
 };
 
-export default function MeasurementChart({ measurements, type, profile }) {
+export default function MeasurementChart({ measurements, type, profile, context }) {
   const config = MEASUREMENT_TYPES[type];
-  const reference = getReference(type, profile);
+  const isGlucose = type === "glicemia";
+  const reference = getReference(type, profile, isGlucose ? context : undefined);
 
   const data = measurements
-    .filter((m) => m.type === type)
+    .filter((m) => m.type === type && (!isGlucose || (m.context || "jejum") === context))
     .sort((a, b) => a.date - b.date)
     .map((m) => ({
       date: m.date.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }),

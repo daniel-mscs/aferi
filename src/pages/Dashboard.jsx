@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
-import { MEASUREMENT_TYPES } from "../constants/measurements";
+import { MEASUREMENT_TYPES, GLUCOSE_CONTEXTS } from "../constants/measurements";
 import MeasurementChart from "../components/MeasurementChart";
 import BuyMeCoffee from "../components/BuyMeCoffee";
 import BMICard from "../components/BMICard";
@@ -15,6 +15,7 @@ export default function Dashboard() {
   const { user, logout } = useAuth();
   const { measurements, addMeasurement, deleteMeasurement } = useMeasurements();
   const [chartType, setChartType] = useState("glicemia");
+  const [chartContext, setChartContext] = useState("jejum");
   const { profile, updateProfile } = useProfile();
   const [historyFilter, setHistoryFilter] = useState("todos");
 
@@ -60,7 +61,25 @@ export default function Dashboard() {
         ))}
       </select>
 
-      <MeasurementChart measurements={measurements} type={chartType} profile={profile} />
+      {chartType === "glicemia" && (
+        <div className="chips">
+          {Object.entries(GLUCOSE_CONTEXTS).map(([key, c]) => (
+            <button
+              key={key}
+              className={`chip ${chartContext === key ? "active" : ""}`}
+              onClick={() => setChartContext(key)}
+            >
+              {c.label}
+            </button>
+          ))}
+        </div>
+      )}
+      <MeasurementChart
+        measurements={measurements}
+        type={chartType}
+        profile={profile}
+        context={chartContext}
+      />
       <RangesSettings profile={profile} onSave={(ranges) => updateProfile({ ranges })} />
       </section>
 
