@@ -12,7 +12,8 @@ export default function Login() {
       <button className="btn-primary login-btn" onClick={() =>
           login().catch((err) => {
             if (err.code !== "auth/popup-closed-by-user") {
-              toast.error("Não foi possível entrar. Tente novamente.");
+              console.error(err);
+              toast.error(`Não foi possível entrar (${err.code})`);
             }
           })
         }>
