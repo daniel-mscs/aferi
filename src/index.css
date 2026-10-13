@@ -241,3 +241,26 @@ textarea:focus {
   border-radius: 12px;
   background: #fff;
 }
+
+.coffee-btn {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 18px;
+  border-radius: 999px;
+  background: #ffdd00;
+  color: #0f1115;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  transition: transform 0.2s;
+}
+
+.coffee-btn:hover {
+  transform: translateY(-2px);
+}

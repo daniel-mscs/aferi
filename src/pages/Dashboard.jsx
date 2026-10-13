@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { MEASUREMENT_TYPES } from "../constants/measurements";
 import MeasurementChart from "../components/MeasurementChart";
+import BuyMeCoffee from "../components/BuyMeCoffee";
 import { useMeasurements } from "../hooks/useMeasurements";
 import MeasurementForm from "../components/MeasurementForm";
 import MeasurementList from "../components/MeasurementList";
@@ -43,6 +44,8 @@ export default function Dashboard() {
         <h2 className="section-title">Histórico</h2>
         <MeasurementList measurements={measurements} onDelete={deleteMeasurement} />
       </section>
+
+      <BuyMeCoffee />
       </section>
     </div>
   );

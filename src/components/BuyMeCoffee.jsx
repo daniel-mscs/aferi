@@ -24,7 +24,13 @@ export default function BuyMeCoffee() {
         <div className="modal-backdrop" onClick={() => setOpen(false)}>
           <div className="modal card" onClick={(e) => e.stopPropagation()}>
             <h2 className="section-title">☕ Me paga um café?</h2>
-            <p className="muted">Se o Aferi te ajuda, qualquer valor via Pix já faz diferença!</p>
+            <p className="muted">
+              O Aferi é e sempre será <strong>gratuito</strong>. 💚
+            </p>
+            <p className="muted">
+              Se ele te ajuda de alguma forma, considere contribuir com qualquer valor via Pix.
+              Isso ajuda a manter o projeto vivo!
+            </p>
 
             <div className="qr-wrapper">
               <QRCodeSVG value={PIX_CODE} size={180} />
