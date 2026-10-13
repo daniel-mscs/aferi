@@ -27,3 +27,15 @@ export const MEASUREMENT_TYPES = {
     reference: { value: { min: 60, max: 100 } },
   },
 };
+export function calcBMI(weightKg, heightCm) {
+  if (!weightKg || !heightCm) return null;
+  const h = heightCm / 100;
+  return weightKg / (h * h);
+}
+
+export function classifyBMI(bmi) {
+  if (bmi < 18.5) return { label: "Abaixo do peso", status: "out-of-range" };
+  if (bmi < 25) return { label: "Peso normal", status: "in-range" };
+  if (bmi < 30) return { label: "Sobrepeso", status: "out-of-range" };
+  return { label: "Obesidade", status: "out-of-range" };
+}
