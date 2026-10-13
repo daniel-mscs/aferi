@@ -8,7 +8,7 @@ import {
   ReferenceArea,
   ResponsiveContainer,
 } from "recharts";
-import { MEASUREMENT_TYPES } from "../constants/measurements";
+import { MEASUREMENT_TYPES, getReference } from "../constants/measurements";
 
 const COLORS = {
   value: "#4ade80",
@@ -22,8 +22,9 @@ const FIELD_LABELS = {
   diastolic: "Diastólica",
 };
 
-export default function MeasurementChart({ measurements, type }) {
+export default function MeasurementChart({ measurements, type, profile }) {
   const config = MEASUREMENT_TYPES[type];
+  const reference = getReference(type, profile);
 
   const data = measurements
     .filter((m) => m.type === type)
@@ -36,8 +37,8 @@ export default function MeasurementChart({ measurements, type }) {
   if (data.length === 0) return <p>Sem dados de {config.label.toLowerCase()} ainda.</p>;
 
   const allValues = data.flatMap((d) => config.fields.map((f) => d[f]));
-  const refMins = config.reference ? config.fields.map((f) => config.reference[f].min) : [];
-  const refMaxs = config.reference ? config.fields.map((f) => config.reference[f].max) : [];
+  const refMins = reference ? config.fields.map((f) => reference[f].min) : [];
+  const refMaxs = reference ? config.fields.map((f) => reference[f].max) : [];
   const yMin = Math.floor(Math.min(...allValues, ...refMins) * 0.9);
   const yMax = Math.ceil(Math.max(...allValues, ...refMaxs) * 1.1);
 
@@ -52,12 +53,12 @@ export default function MeasurementChart({ measurements, type }) {
           labelStyle={{ color: "#8b919c" }}
         />
 
-        {config.reference &&
+        {reference &&
           config.fields.map((field) => (
             <ReferenceArea
               key={`ref-${field}`}
-              y1={config.reference[field].min}
-              y2={config.reference[field].max}
+              y1={reference[field].min}
+              y2={reference[field].max}
               fill={COLORS[field]}
               fillOpacity={0.1}
             />

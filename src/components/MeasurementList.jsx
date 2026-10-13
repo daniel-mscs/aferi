@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MEASUREMENT_TYPES } from "../constants/measurements";
+import { MEASUREMENT_TYPES, getReference } from "../constants/measurements";
 import { getTip } from "../constants/tips";
 
 function formatValues(m) {
@@ -7,16 +7,17 @@ function formatValues(m) {
   return m.values.value;
 }
 
-function getStatus(m, config) {
-  if (!config.reference) return "";
+function getStatus(m, config, profile) {
+  const reference = getReference(m.type, profile);
+  if (!reference) return "";
   const outOfRange = config.fields.some((f) => {
-    const { min, max } = config.reference[f];
+    const { min, max } = reference[f];
     return m.values[f] < min || m.values[f] > max;
   });
   return outOfRange ? "out-of-range" : "in-range";
 }
 
-export default function MeasurementList({ measurements, onDelete }) {
+export default function MeasurementList({ measurements, onDelete, profile }) {
   const [toDelete, setToDelete] = useState(null);
 
   if (measurements.length === 0) return <p className="muted">Nenhuma medição ainda.</p>;
@@ -31,7 +32,7 @@ export default function MeasurementList({ measurements, onDelete }) {
     <ul className="history">
       {measurements.map((m) => {
         const config = MEASUREMENT_TYPES[m.type];
-        const status = getStatus(m, config);
+        const status = getStatus(m, config, profile);
         const tip = getTip(m);
         return (
           <li key={m.id} className="history-item">

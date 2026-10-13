@@ -39,3 +39,10 @@ export function classifyBMI(bmi) {
   if (bmi < 30) return { label: "Sobrepeso", status: "out-of-range" };
   return { label: "Obesidade", status: "out-of-range" };
 }
+
+export function getReference(type, profile) {
+  const base = MEASUREMENT_TYPES[type].reference;
+  if (!base) return null;
+  const custom = profile?.ranges?.[type];
+  return custom ? { ...base, ...custom } : base;
+}

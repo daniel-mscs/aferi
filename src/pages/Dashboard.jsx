@@ -59,7 +59,7 @@ export default function Dashboard() {
         ))}
       </select>
 
-      <MeasurementChart measurements={measurements} type={chartType} />
+      <MeasurementChart measurements={measurements} type={chartType} profile={profile} />
       </section>
 
       <section className="card">
@@ -77,9 +77,9 @@ export default function Dashboard() {
             </button>
           ))}
         </div>
-        <MeasurementList measurements={filteredMeasurements} onDelete={deleteMeasurement} />
+        <MeasurementList measurements={filteredMeasurements} onDelete={deleteMeasurement} profile={profile} />
         <p className="muted disclaimer">
-          As dicas são orientações gerais e não substituem avaliação médica. Em emergência, ligue 192 (SAMU).
+          Uso destinado a adultos. As dicas são orientações gerais e não substituem avaliação médica. Em emergência, ligue 192 (SAMU).
         </p>
       </section>
 
