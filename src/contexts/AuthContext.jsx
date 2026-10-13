@@ -5,7 +5,12 @@ import {
   signInWithRedirect,
   getRedirectResult,
   signOut,
+  sendSignInLinkToEmail,
+  isSignInWithEmailLink,
+  signInWithEmailLink,
 } from "firebase/auth";
+
+const EMAIL_KEY = "aferi-email-for-signin";
 import { auth, googleProvider } from "../firebase";
 
 const AuthContext = createContext(null);
@@ -20,6 +25,24 @@ export function AuthProvider({ children }) {
       setLoading(false);
     });
     getRedirectResult(auth).catch(() => {});
+
+    if (isSignInWithEmailLink(auth, window.location.href)) {
+      let email = null;
+      try {
+        email = localStorage.getItem(EMAIL_KEY);
+      } catch {}
+      if (!email) email = window.prompt("Confirme seu e-mail para entrar:");
+      if (email) {
+        signInWithEmailLink(auth, email, window.location.href)
+          .then(() => {
+            try {
+              localStorage.removeItem(EMAIL_KEY);
+            } catch {}
+            window.history.replaceState(null, "", "/");
+          })
+          .catch(() => {});
+      }
+    }
     return unsubscribe;
   }, []);
 
@@ -41,8 +64,18 @@ export function AuthProvider({ children }) {
   };
   const logout = () => signOut(auth);
 
+  const sendLoginLink = async (email) => {
+    await sendSignInLinkToEmail(auth, email, {
+      url: window.location.origin,
+      handleCodeInApp: true,
+    });
+    try {
+      localStorage.setItem(EMAIL_KEY, email);
+    } catch {}
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, sendLoginLink }}>
       {children}
     </AuthContext.Provider>
   );
