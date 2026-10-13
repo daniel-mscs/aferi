@@ -8,7 +8,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg'],
+      includeAssets: ['favicon.ico', 'logo.svg', 'apple-touch-icon-180x180.png'],
       manifest: {
         name: 'Aferi',
         short_name: 'Aferi',
