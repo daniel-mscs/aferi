@@ -14,6 +14,8 @@ import {
 import { db } from "../firebase";
 import { useAuth } from "../contexts/AuthContext";
 
+const logError = (err) => console.error("Erro ao sincronizar:", err);
+
 export function useMeasurements() {
   const { user } = useAuth();
   const [measurements, setMeasurements] = useState([]);
@@ -25,10 +27,15 @@ export function useMeasurements() {
     const ref = collection(db, "users", user.uid, "measurements");
     const q = query(ref, orderBy("date", "desc"));
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
+    const unsubscribe = onSnapshot(q, { includeMetadataChanges: true }, (snapshot) => {
       const list = snapshot.docs.map((d) => {
         const data = d.data();
-        return { id: d.id, ...data, date: data.date.toDate() };
+        return {
+          id: d.id,
+          ...data,
+          date: data.date.toDate(),
+          pending: d.metadata.hasPendingWrites,
+        };
       });
       setMeasurements(list);
       setLoading(false);
@@ -37,27 +44,32 @@ export function useMeasurements() {
     return unsubscribe;
   }, [user]);
 
-  const addMeasurement = ({ type, values, date, note, context }) =>
-    addDoc(collection(db, "users", user.uid, "measurements"), {
+  const measurementsRef = () => collection(db, "users", user.uid, "measurements");
+
+  const addMeasurement = ({ type, values, date, note, context }) => {
+    addDoc(measurementsRef(), {
       type,
       values,
       context: context || null,
       date: Timestamp.fromDate(date),
       note: note || "",
       createdAt: serverTimestamp(),
-    });
+    }).catch(logError);
+  };
 
-  const deleteMeasurement = (id) =>
-    deleteDoc(doc(db, "users", user.uid, "measurements", id));
-
-  const updateMeasurement = (id, { type, values, date, note, context }) =>
-    updateDoc(doc(db, "users", user.uid, "measurements", id), {
+  const updateMeasurement = (id, { type, values, date, note, context }) => {
+    updateDoc(doc(measurementsRef(), id), {
       type,
       values,
+      context: context || null,
       date: Timestamp.fromDate(date),
       note: note || "",
-      context: context || null,
-    });
+    }).catch(logError);
+  };
+
+  const deleteMeasurement = (id) => {
+    deleteDoc(doc(measurementsRef(), id)).catch(logError);
+  };
 
   return { measurements, loading, addMeasurement, deleteMeasurement, updateMeasurement };
 }

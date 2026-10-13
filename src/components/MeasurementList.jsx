@@ -48,6 +48,7 @@ export default function MeasurementList({ measurements, onDelete, onUpdate, prof
               </span>
               <span className="muted">
                 {m.date.toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}
+                {m.pending && " · ⏳ aguardando sincronizar"}
               </span>
               {m.note && <p className="history-note">{m.note}</p>}
               {tip && <p className={`tip tip-${tip.level}`}>{tip.text}</p>}

@@ -13,8 +13,11 @@ export function useProfile() {
     return onSnapshot(ref, (snap) => setProfile(snap.exists() ? snap.data() : {}));
   }, [user]);
 
-  const updateProfile = (data) =>
-    setDoc(doc(db, "users", user.uid), data, { merge: true });
+  const updateProfile = (data) => {
+    setDoc(doc(db, "users", user.uid), data, { merge: true }).catch((err) =>
+      console.error("Erro ao sincronizar perfil:", err)
+    );
+  };
 
   return { profile, updateProfile };
 }
