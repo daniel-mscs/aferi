@@ -6,6 +6,7 @@ import BuyMeCoffee from "../components/BuyMeCoffee";
 import BMICard from "../components/BMICard";
 import InstallPrompt from "../components/InstallPrompt";
 import RangesSettings from "../components/RangesSettings";
+import ExportReport from "../components/ExportReport";
 import { useProfile } from "../hooks/useProfile";
 import { useMeasurements } from "../hooks/useMeasurements";
 import MeasurementForm from "../components/MeasurementForm";
@@ -85,6 +86,11 @@ export default function Dashboard() {
 
       <section className="card">
         <h2 className="section-title">Histórico</h2>
+        <ExportReport
+          measurements={measurements}
+          profile={profile}
+          userName={user.displayName}
+        />
         <section className="card">
         <h2 className="section-title">Histórico</h2>
         <div className="chips">
