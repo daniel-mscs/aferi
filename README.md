@@ -6,7 +6,7 @@
   **Seu diário de sinais vitais.**
   PWA para registrar glicemia, pressão arterial, peso e frequência cardíaca, com gráficos, faixas de referência e relatório em PDF para levar ao médico.
 
-  [🔗 Acessar o app](https://SEU-LINK.vercel.app) · [📜 Política de Privacidade](https://SEU-LINK.vercel.app/privacidade.html)
+  [🔗 Acessar o app](https://aferi-saude.vercel.app) · [📜 Política de Privacidade](https://aferi-saude.vercel.app/privacidade.html)
 
 </div>
 
