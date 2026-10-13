@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 const DISMISS_KEY = "aferi-install-dismissed";
+const BTN_KEY = "aferi-install-btn-hidden";
 
 function isStandalone() {
   return (
@@ -26,6 +27,20 @@ export default function InstallPrompt() {
   const [show, setShow] = useState(false);
   const [installed, setInstalled] = useState(isStandalone());
   const ios = isIOS();
+  const [btnHidden, setBtnHidden] = useState(() => {
+    try {
+      return localStorage.getItem(BTN_KEY) === "1";
+    } catch {
+      return false;
+    }
+  });
+
+  const hideButton = () => {
+    try {
+      localStorage.setItem(BTN_KEY, "1");
+    } catch {}
+    setBtnHidden(true);
+  };
 
   useEffect(() => {
     if (installed) return;
@@ -67,9 +82,14 @@ export default function InstallPrompt() {
 
   return (
     <>
-      <button className="install-btn" onClick={() => setShow(true)}>
-        📲 Instalar app
-      </button>
+      {!btnHidden && (
+        <div className="install-btn">
+          <button onClick={() => setShow(true)}>📲 Instalar app</button>
+          <button className="install-close" onClick={hideButton} aria-label="Fechar">
+            ✕
+          </button>
+        </div>
+      )}
 
       {show && (
         <div className="modal-backdrop" onClick={dismiss}>

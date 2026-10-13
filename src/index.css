@@ -471,3 +471,75 @@ textarea:focus {
 .summary-avg {
   font-size: 12px;
 }
+
+.install-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.install-btn button {
+  padding: 0;
+  background: none;
+  color: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+.install-btn .install-close {
+  padding-left: 10px;
+  border-left: 1px solid rgba(0, 0, 0, 0.25);
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.splash {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.splash-logo {
+  width: 96px;
+  height: 96px;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+.splash-line {
+  stroke-dasharray: 620;
+  stroke-dashoffset: 620;
+  animation: ecg 1.4s ease-in-out infinite;
+}
+
+@keyframes ecg {
+  0% {
+    stroke-dashoffset: 620;
+  }
+  50% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: -620;
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.06);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .splash-logo,
+  .splash-line {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}
