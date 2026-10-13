@@ -15,6 +15,17 @@ export default function Dashboard() {
   const { measurements, addMeasurement, deleteMeasurement } = useMeasurements();
   const [chartType, setChartType] = useState("glicemia");
   const { profile, updateProfile } = useProfile();
+  const [historyFilter, setHistoryFilter] = useState("todos");
+
+  const filteredMeasurements =
+    historyFilter === "todos"
+      ? measurements
+      : measurements.filter((m) => m.type === historyFilter);
+
+  const filterOptions = [
+    ["todos", "Todos"],
+    ...Object.entries(MEASUREMENT_TYPES).map(([key, t]) => [key, t.label]),
+  ];
 
   return (
     <div className="container">
@@ -55,7 +66,18 @@ export default function Dashboard() {
         <h2 className="section-title">Histórico</h2>
         <section className="card">
         <h2 className="section-title">Histórico</h2>
-        <MeasurementList measurements={measurements} onDelete={deleteMeasurement} />
+        <div className="chips">
+          {filterOptions.map(([key, label]) => (
+            <button
+              key={key}
+              className={`chip ${historyFilter === key ? "active" : ""}`}
+              onClick={() => setHistoryFilter(key)}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+        <MeasurementList measurements={filteredMeasurements} onDelete={deleteMeasurement} />
         <p className="muted disclaimer">
           As dicas são orientações gerais e não substituem avaliação médica. Em emergência, ligue 192 (SAMU).
         </p>
