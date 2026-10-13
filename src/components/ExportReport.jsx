@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "sonner";
 
 const PERIODS = [
   [30, "30 dias"],
@@ -17,7 +18,7 @@ export default function ExportReport({ measurements, profile, userName }) {
     const ok = exportPdf(measurements, { userName, days, profile });
     setLoading(false);
     if (!ok) {
-      alert("Nenhuma medição nesse período.");
+      toast.error("Nenhuma medição nesse período.");
       return;
     }
     setOpen(false);

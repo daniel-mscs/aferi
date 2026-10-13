@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { MEASUREMENT_TYPES, GLUCOSE_CONTEXTS } from "../constants/measurements";
+import { toast } from "sonner";
 
 const FIELD_LABELS = {
   value: "Valor",
@@ -33,11 +34,11 @@ export default function MeasurementForm({ onSave, initial, onCancel }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (new Date(date) > new Date()) {
-      alert("A data não pode ser no futuro.");
+      toast.error("A data não pode ser no futuro.");
       return;
     }
     if (Object.values(values).some((v) => Number(v) <= 0)) {
-      alert("Os valores precisam ser maiores que zero.");
+      toast.error("Os valores precisam ser maiores que zero.");
       return;
     }
     setSaving(true);
@@ -49,7 +50,7 @@ export default function MeasurementForm({ onSave, initial, onCancel }) {
       })
     );
     if (type === "pressao" && numericValues.systolic <= numericValues.diastolic) {
-      alert("A sistólica (a maior) precisa ser maior que a diastólica (a menor).");
+      toast.error("A sistólica (a maior) precisa ser maior que a diastólica (a menor).");
       setSaving(false);
       return;
     }
@@ -60,6 +61,7 @@ export default function MeasurementForm({ onSave, initial, onCancel }) {
       note,
       context: type === "glicemia" ? context : null,
     });
+    toast.success(initial ? "Medição atualizada!" : "Medição registrada!");
     if (!initial) {
       setValues({});
       setNote("");

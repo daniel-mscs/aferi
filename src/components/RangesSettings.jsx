@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { MEASUREMENT_TYPES, GLUCOSE_CONTEXTS, getReference } from "../constants/measurements";
+import { toast } from "sonner";
 
 const FIELD_LABELS = { value: "", systolic: "Sistólica", diastolic: "Diastólica" };
 
@@ -55,11 +56,12 @@ export default function RangesSettings({ profile, onSave }) {
       MEASUREMENT_TYPES[item.type].fields.some((f) => draft[item.key][f].min >= draft[item.key][f].max)
     );
     if (invalid) {
-      alert("O valor mínimo precisa ser menor que o máximo.");
+      toast.error("O valor mínimo precisa ser menor que o máximo.");
       return;
     }
     setSaving(true);
     await onSave(draft);
+    toast.success("Metas salvas!");
     setSaving(false);
     setOpen(false);
   };

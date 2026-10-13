@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { deleteAccount } from "../utils/deleteAccount";
+import { toast } from "sonner";
 
 export default function DeleteAccount() {
   const [open, setOpen] = useState(false);
@@ -16,7 +17,7 @@ export default function DeleteAccount() {
     try {
       await deleteAccount();
     } catch {
-      alert("Não foi possível apagar a conta. Tente novamente.");
+      toast.error("Não foi possível apagar a conta. Tente novamente.");
       setLoading(false);
     }
   };

@@ -9,6 +9,7 @@ import {
 } from "../constants/measurements";
 import { getTip } from "../constants/tips";
 import MeasurementForm from "./MeasurementForm";
+import { toast } from "sonner";
 
 function formatValues(m) {
   if (m.type === "pressao") return `${m.values.systolic}/${m.values.diastolic}`;
@@ -25,6 +26,7 @@ export default function MeasurementList({ measurements, onDelete, onUpdate, prof
   const confirmDelete = async () => {
     await onDelete(toDelete.id);
     setToDelete(null);
+    toast.success("Medição apagada.");
   };
 
   return (
