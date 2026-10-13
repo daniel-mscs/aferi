@@ -3,6 +3,8 @@ import { useAuth } from "../contexts/AuthContext";
 import { MEASUREMENT_TYPES } from "../constants/measurements";
 import MeasurementChart from "../components/MeasurementChart";
 import BuyMeCoffee from "../components/BuyMeCoffee";
+import BMICard from "../components/BMICard";
+import { useProfile } from "../hooks/useProfile";
 import { useMeasurements } from "../hooks/useMeasurements";
 import MeasurementForm from "../components/MeasurementForm";
 import MeasurementList from "../components/MeasurementList";
@@ -11,6 +13,7 @@ export default function Dashboard() {
   const { user, logout } = useAuth();
   const { measurements, addMeasurement, deleteMeasurement } = useMeasurements();
   const [chartType, setChartType] = useState("glicemia");
+  const { profile, updateProfile } = useProfile();
 
   return (
     <div className="container">
@@ -25,6 +28,15 @@ export default function Dashboard() {
       <section className="card">
         <h2 className="section-title">Nova medição</h2>
         <MeasurementForm onSave={addMeasurement} />
+      </section>
+
+      <section className="card">
+        <h2 className="section-title">IMC</h2>
+        <BMICard
+          measurements={measurements}
+          profile={profile}
+          onSaveHeight={(height) => updateProfile({ height })}
+        />
       </section>
 
       <section className="card">

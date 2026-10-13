@@ -264,3 +264,25 @@ textarea:focus {
 .coffee-btn:hover {
   transform: translateY(-2px);
 }
+.bmi {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.bmi .history-value {
+  font-size: 32px;
+}
+
+.bmi-label {
+  font-weight: 600;
+}
+
+.bmi-label.in-range {
+  color: var(--primary);
+}
+
+.bmi-label.out-of-range {
+  color: var(--danger);
+}
