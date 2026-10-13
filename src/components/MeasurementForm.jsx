@@ -35,7 +35,11 @@ export default function MeasurementForm({ onSave }) {
     }
     setSaving(true);
     const numericValues = Object.fromEntries(
-      Object.entries(values).map(([k, v]) => [k, Number(v)])
+      Object.entries(values).map(([k, v]) => {
+        let n = Number(v);
+        if (type === "pressao" && n < 30) n = Math.round(n * 10);
+        return [k, n];
+      })
     );
     await onSave({ type, values: numericValues, date: new Date(date), note });
     setValues({});
@@ -65,6 +69,12 @@ export default function MeasurementForm({ onSave }) {
           />
         </label>
       ))}
+
+      {type === "pressao" && (
+        <p className="muted">
+          Pode digitar do jeito que se fala (ex: 12 por 8) que o app converte pra 120/80.
+        </p>
+      )}
 
       <input
         type="datetime-local"

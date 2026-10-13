@@ -301,3 +301,23 @@ textarea:focus {
   height: 72px;
   align-self: center;
 }
+
+.install-btn {
+  position: fixed;
+  left: 16px;
+  bottom: 16px;
+  z-index: 10;
+  padding: 12px 18px;
+  border-radius: 999px;
+  background: var(--primary);
+  color: var(--primary-text);
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  transition: transform 0.2s;
+}
+
+.install-btn:hover {
+  transform: translateY(-2px);
+}
+

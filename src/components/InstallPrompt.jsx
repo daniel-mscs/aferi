@@ -27,22 +27,34 @@ export default function InstallPrompt() {
   const [ios, setIos] = useState(false);
 
   useEffect(() => {
-    if (isStandalone() || wasDismissed()) return;
+    if (isStandalone()) return;
 
     if (isIOS()) {
       setIos(true);
-      const timer = setTimeout(() => setShow(true), 3000);
-      return () => clearTimeout(timer);
+      if (!wasDismissed()) {
+        const timer = setTimeout(() => setShow(true), 3000);
+        return () => clearTimeout(timer);
+      }
+      return;
     }
 
     const handler = (e) => {
       e.preventDefault();
       setDeferredPrompt(e);
-      setShow(true);
+      if (!wasDismissed()) setShow(true);
+    };
+
+    const installed = () => {
+      setDeferredPrompt(null);
+      setShow(false);
     };
 
     window.addEventListener("beforeinstallprompt", handler);
-    return () => window.removeEventListener("beforeinstallprompt", handler);
+    window.addEventListener("appinstalled", installed);
+    return () => {
+      window.removeEventListener("beforeinstallprompt", handler);
+      window.removeEventListener("appinstalled", installed);
+    };
   }, []);
 
   const dismiss = () => {
@@ -59,32 +71,41 @@ export default function InstallPrompt() {
     setShow(false);
   };
 
-  if (!show) return null;
+  const canInstall = ios || deferredPrompt;
+  if (!canInstall) return null;
 
   return (
-    <div className="modal-backdrop" onClick={dismiss}>
-      <div className="modal card" onClick={(e) => e.stopPropagation()}>
-        <img src="/logo.svg" alt="" className="install-logo" />
-        <h2 className="section-title">Instale o Aferi 📲</h2>
-        <p className="muted">
-          Acesse direto da tela inicial, em tela cheia, como um app de verdade.
-        </p>
+    <>
+      <button className="install-btn" onClick={() => setShow(true)}>
+        📲 Instalar app
+      </button>
 
-        {ios ? (
-          <>
+      {show && (
+        <div className="modal-backdrop" onClick={dismiss}>
+          <div className="modal card" onClick={(e) => e.stopPropagation()}>
+            <img src="/logo.svg" alt="" className="install-logo" />
+            <h2 className="section-title">Instale o Aferi 📲</h2>
             <p className="muted">
-              Toque em <strong>Compartilhar</strong> (o quadrado com a seta pra cima) e depois em{" "}
-              <strong>Adicionar à Tela de Início</strong>.
+              Acesse direto da tela inicial, em tela cheia, como um app de verdade.
             </p>
-            <button className="btn-primary" onClick={dismiss}>Entendi</button>
-          </>
-        ) : (
-          <>
-            <button className="btn-primary" onClick={install}>Instalar</button>
-            <button className="btn-ghost" onClick={dismiss}>Agora não</button>
-          </>
-        )}
-      </div>
-    </div>
+
+            {ios ? (
+              <>
+                <p className="muted">
+                  Toque em <strong>Compartilhar</strong> (o quadrado com a seta pra cima) e depois em{" "}
+                  <strong>Adicionar à Tela de Início</strong>.
+                </p>
+                <button className="btn-primary" onClick={dismiss}>Entendi</button>
+              </>
+            ) : (
+              <>
+                <button className="btn-primary" onClick={install}>Instalar</button>
+                <button className="btn-ghost" onClick={dismiss}>Agora não</button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+    </>
   );
 }
