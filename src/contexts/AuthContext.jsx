@@ -1,5 +1,11 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
+import {
+  onAuthStateChanged,
+  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
+  signOut,
+} from "firebase/auth";
 import { auth, googleProvider } from "../firebase";
 
 const AuthContext = createContext(null);
@@ -13,10 +19,26 @@ export function AuthProvider({ children }) {
       setUser(firebaseUser);
       setLoading(false);
     });
+    getRedirectResult(auth).catch(() => {});
     return unsubscribe;
   }, []);
 
-  const login = () => signInWithPopup(auth, googleProvider);
+  const login = async () => {
+    try {
+      await signInWithPopup(auth, googleProvider);
+    } catch (err) {
+      const fallbackErrors = [
+        "auth/popup-blocked",
+        "auth/operation-not-supported-in-this-environment",
+        "auth/cancelled-popup-request",
+      ];
+      if (fallbackErrors.includes(err.code)) {
+        await signInWithRedirect(auth, googleProvider);
+      } else {
+        throw err;
+      }
+    }
+  };
   const logout = () => signOut(auth);
 
   return (
