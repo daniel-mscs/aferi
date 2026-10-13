@@ -16,6 +16,7 @@ import MeasurementList from "../components/MeasurementList";
 
 export default function Dashboard() {
   const { user, logout } = useAuth();
+  const firstName = (user.displayName || user.email?.split("@")[0] || "").split(" ")[0];
   const { measurements, addMeasurement, deleteMeasurement, updateMeasurement } = useMeasurements();
   const [chartType, setChartType] = useState("glicemia");
   const [chartContext, setChartContext] = useState("jejum");
@@ -38,7 +39,7 @@ export default function Dashboard() {
       <header className="app-header">
         <div>
           <h1 className="logo">Aferi</h1>
-          <span className="muted">Olá, {user.displayName?.split(" ")[0]} 👋</span>
+          <span className="muted">Olá, {firstName} 👋</span>
         </div>
         <button className="btn-ghost" onClick={logout}>Sair</button>
       </header>
@@ -112,7 +113,7 @@ export default function Dashboard() {
         <ExportReport
           measurements={measurements}
           profile={profile}
-          userName={user.displayName}
+          userName={user.displayName || user.email}
         />
         <section className="card">
         <h2 className="section-title">Histórico</h2>

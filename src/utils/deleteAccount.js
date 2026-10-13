@@ -5,7 +5,18 @@ import { auth, db, googleProvider } from "../firebase";
 export async function deleteAccount() {
   const user = auth.currentUser;
 
-  await reauthenticateWithPopup(user, googleProvider);
+  const isGoogle = user.providerData.some((p) => p.providerId === "google.com");
+
+  if (isGoogle) {
+    await reauthenticateWithPopup(user, googleProvider);
+  } else {
+    const lastSignIn = new Date(user.metadata.lastSignInTime).getTime();
+    if (Date.now() - lastSignIn > 5 * 60 * 1000) {
+      const err = new Error("Login antigo");
+      err.code = "auth/requires-recent-login";
+      throw err;
+    }
+  }
 
   const snap = await getDocs(collection(db, "users", user.uid, "measurements"));
   const docs = snap.docs;

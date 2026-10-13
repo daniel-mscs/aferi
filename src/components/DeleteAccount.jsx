@@ -16,8 +16,12 @@ export default function DeleteAccount() {
     setLoading(true);
     try {
       await deleteAccount();
-    } catch {
-      toast.error("Não foi possível apagar a conta. Tente novamente.");
+    } catch (err) {
+      toast.error(
+        err.code === "auth/requires-recent-login"
+          ? "Por segurança, saia e entre de novo antes de apagar a conta."
+          : "Não foi possível apagar a conta. Tente novamente."
+      );
       setLoading(false);
     }
   };
