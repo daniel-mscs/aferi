@@ -403,3 +403,26 @@ textarea:focus {
 .range-label {
   min-width: 72px;
 }
+
+.btn-danger:disabled {
+  opacity: 0.4;
+}
+
+.btn-danger-ghost {
+  color: var(--danger);
+}
+
+.consent {
+  max-width: 320px;
+  margin-top: 12px;
+  font-size: 12px;
+}
+
+.consent a {
+  color: var(--primary);
+}
+
+.link-ghost {
+  display: inline-block;
+  text-decoration: none;
+}

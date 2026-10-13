@@ -7,6 +7,7 @@ import BMICard from "../components/BMICard";
 import InstallPrompt from "../components/InstallPrompt";
 import RangesSettings from "../components/RangesSettings";
 import ExportReport from "../components/ExportReport";
+import DeleteAccount from "../components/DeleteAccount";
 import { useProfile } from "../hooks/useProfile";
 import { useMeasurements } from "../hooks/useMeasurements";
 import MeasurementForm from "../components/MeasurementForm";
@@ -108,6 +109,14 @@ export default function Dashboard() {
         <p className="muted disclaimer">
           Uso destinado a adultos. As dicas são orientações gerais e não substituem avaliação médica. Em emergência, ligue 192 (SAMU).
         </p>
+      </section>
+
+      <section className="card">
+        <h2 className="section-title">Privacidade</h2>
+        <a className="btn-ghost link-ghost" href="/privacidade.html" target="_blank" rel="noopener noreferrer">
+          📜 Política de Privacidade
+        </a>
+        <DeleteAccount />
       </section>
 
       <BuyMeCoffee />
