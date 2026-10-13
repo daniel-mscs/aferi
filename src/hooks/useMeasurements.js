@@ -3,6 +3,7 @@ import {
   collection,
   addDoc,
   deleteDoc,
+  updateDoc,
   doc,
   onSnapshot,
   orderBy,
@@ -49,5 +50,14 @@ export function useMeasurements() {
   const deleteMeasurement = (id) =>
     deleteDoc(doc(db, "users", user.uid, "measurements", id));
 
-  return { measurements, loading, addMeasurement, deleteMeasurement };
+  const updateMeasurement = (id, { type, values, date, note, context }) =>
+    updateDoc(doc(db, "users", user.uid, "measurements", id), {
+      type,
+      values,
+      date: Timestamp.fromDate(date),
+      note: note || "",
+      context: context || null,
+    });
+
+  return { measurements, loading, addMeasurement, deleteMeasurement, updateMeasurement };
 }

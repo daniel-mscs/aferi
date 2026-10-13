@@ -426,3 +426,13 @@ textarea:focus {
   display: inline-block;
   text-decoration: none;
 }
+
+.history-actions {
+  display: flex;
+}
+
+.edit-modal {
+  max-height: 85dvh;
+  overflow-y: auto;
+  text-align: left;
+}

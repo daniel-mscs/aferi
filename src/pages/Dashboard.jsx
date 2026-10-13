@@ -15,7 +15,7 @@ import MeasurementList from "../components/MeasurementList";
 
 export default function Dashboard() {
   const { user, logout } = useAuth();
-  const { measurements, addMeasurement, deleteMeasurement } = useMeasurements();
+  const { measurements, addMeasurement, deleteMeasurement, updateMeasurement } = useMeasurements();
   const [chartType, setChartType] = useState("glicemia");
   const [chartContext, setChartContext] = useState("jejum");
   const { profile, updateProfile } = useProfile();
@@ -105,7 +105,7 @@ export default function Dashboard() {
             </button>
           ))}
         </div>
-        <MeasurementList measurements={filteredMeasurements} onDelete={deleteMeasurement} profile={profile} />
+        <MeasurementList measurements={filteredMeasurements} onDelete={deleteMeasurement} onUpdate={updateMeasurement} profile={profile} />
         <p className="muted disclaimer">
           Uso destinado a adultos. As dicas são orientações gerais e não substituem avaliação médica. Em emergência, ligue 192 (SAMU).
         </p>

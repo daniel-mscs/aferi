@@ -7,18 +7,20 @@ const FIELD_LABELS = {
   diastolic: "Diastólica (a menor)",
 };
 
-function nowLocal() {
-  const d = new Date();
+function toLocalInput(date = new Date()) {
+  const d = new Date(date);
   d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
   return d.toISOString().slice(0, 16);
 }
 
-export default function MeasurementForm({ onSave }) {
-  const [type, setType] = useState("glicemia");
-  const [values, setValues] = useState({});
-  const [date, setDate] = useState(nowLocal());
-  const [note, setNote] = useState("");
-  const [context, setContext] = useState("jejum");
+const nowLocal = () => toLocalInput();
+
+export default function MeasurementForm({ onSave, initial, onCancel }) {
+  const [type, setType] = useState(initial?.type ?? "glicemia");
+  const [values, setValues] = useState(initial?.values ?? {});
+  const [date, setDate] = useState(initial ? toLocalInput(initial.date) : nowLocal());
+  const [note, setNote] = useState(initial?.note ?? "");
+  const [context, setContext] = useState(initial?.context ?? "jejum");
   const [saving, setSaving] = useState(false);
 
   const config = MEASUREMENT_TYPES[type];
@@ -58,9 +60,11 @@ export default function MeasurementForm({ onSave }) {
       note,
       context: type === "glicemia" ? context : null,
     });
-    setValues({});
-    setNote("");
-    setDate(nowLocal());
+    if (!initial) {
+      setValues({});
+      setNote("");
+      setDate(nowLocal());
+    }
     setSaving(false);
   };
 
@@ -124,8 +128,13 @@ export default function MeasurementForm({ onSave }) {
       />
 
       <button type="submit" className="btn-primary" disabled={saving}>
-        {saving ? "Salvando..." : "Registrar"}
+        {saving ? "Salvando..." : initial ? "Salvar alterações" : "Registrar"}
       </button>
+      {onCancel && (
+        <button type="button" className="btn-ghost" onClick={onCancel}>
+          Cancelar
+        </button>
+      )}
     </form>
   );
 }

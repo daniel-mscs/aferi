@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { MEASUREMENT_TYPES, GLUCOSE_CONTEXTS, getReference } from "../constants/measurements";
 import { getTip } from "../constants/tips";
+import MeasurementForm from "./MeasurementForm";
 
 function formatValues(m) {
   if (m.type === "pressao") return `${m.values.systolic}/${m.values.diastolic}`;
@@ -17,8 +18,9 @@ function getStatus(m, config, profile) {
   return outOfRange ? "out-of-range" : "in-range";
 }
 
-export default function MeasurementList({ measurements, onDelete, profile }) {
+export default function MeasurementList({ measurements, onDelete, onUpdate, profile }) {
   const [toDelete, setToDelete] = useState(null);
+  const [toEdit, setToEdit] = useState(null);
 
   if (measurements.length === 0) return <p className="muted">Nenhuma medição ainda.</p>;
 
@@ -50,13 +52,34 @@ export default function MeasurementList({ measurements, onDelete, profile }) {
               {m.note && <p className="history-note">{m.note}</p>}
               {tip && <p className={`tip tip-${tip.level}`}>{tip.text}</p>}
             </div>
-            <button className="btn-ghost" onClick={() => setToDelete(m)} aria-label="Apagar">
-              🗑️
-            </button>
+            <div className="history-actions">
+              <button className="btn-ghost" onClick={() => setToEdit(m)} aria-label="Editar">
+                ✏️
+              </button>
+              <button className="btn-ghost" onClick={() => setToDelete(m)} aria-label="Apagar">
+                🗑️
+              </button>
+            </div>
           </li>
         );
       })}
     </ul>
+
+    {toEdit && (
+      <div className="modal-backdrop" onClick={() => setToEdit(null)}>
+        <div className="modal card edit-modal" onClick={(e) => e.stopPropagation()}>
+          <h2 className="section-title">Editar medição</h2>
+          <MeasurementForm
+            initial={toEdit}
+            onSave={async (data) => {
+              await onUpdate(toEdit.id, data);
+              setToEdit(null);
+            }}
+            onCancel={() => setToEdit(null)}
+          />
+        </div>
+      </div>
+    )}
 
     {toDelete && (
       <div className="modal-backdrop" onClick={() => setToDelete(null)}>
