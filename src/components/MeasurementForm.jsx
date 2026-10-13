@@ -3,8 +3,8 @@ import { MEASUREMENT_TYPES, GLUCOSE_CONTEXTS } from "../constants/measurements";
 
 const FIELD_LABELS = {
   value: "Valor",
-  systolic: "Sistólica",
-  diastolic: "Diastólica",
+  systolic: "Sistólica (a maior)",
+  diastolic: "Diastólica (a menor)",
 };
 
 function nowLocal() {
@@ -46,6 +46,11 @@ export default function MeasurementForm({ onSave }) {
         return [k, n];
       })
     );
+    if (type === "pressao" && numericValues.systolic <= numericValues.diastolic) {
+      alert("A sistólica (a maior) precisa ser maior que a diastólica (a menor).");
+      setSaving(false);
+      return;
+    }
     await onSave({
       type,
       values: numericValues,
