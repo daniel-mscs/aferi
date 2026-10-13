@@ -29,6 +29,10 @@ export default function MeasurementForm({ onSave }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (new Date(date) > new Date()) {
+      alert("A data não pode ser no futuro.");
+      return;
+    }
     setSaving(true);
     const numericValues = Object.fromEntries(
       Object.entries(values).map(([k, v]) => [k, Number(v)])
@@ -66,6 +70,7 @@ export default function MeasurementForm({ onSave }) {
         type="datetime-local"
         value={date}
         onChange={(e) => setDate(e.target.value)}
+        max={nowLocal()}
         required
       />
 
