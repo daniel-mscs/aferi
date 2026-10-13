@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { MEASUREMENT_TYPES } from "../constants/measurements";
 
 function formatValues(m) {
@@ -15,13 +16,17 @@ function getStatus(m, config) {
 }
 
 export default function MeasurementList({ measurements, onDelete }) {
+  const [toDelete, setToDelete] = useState(null);
+
   if (measurements.length === 0) return <p className="muted">Nenhuma medição ainda.</p>;
 
-  const handleDelete = (id) => {
-    if (confirm("Apagar esta medição?")) onDelete(id);
+  const confirmDelete = async () => {
+    await onDelete(toDelete.id);
+    setToDelete(null);
   };
 
   return (
+    <>
     <ul className="history">
       {measurements.map((m) => {
         const config = MEASUREMENT_TYPES[m.type];
@@ -38,12 +43,32 @@ export default function MeasurementList({ measurements, onDelete }) {
               </span>
               {m.note && <p className="history-note">{m.note}</p>}
             </div>
-            <button className="btn-ghost" onClick={() => handleDelete(m.id)} aria-label="Apagar">
+            <button className="btn-ghost" onClick={() => setToDelete(m)} aria-label="Apagar">
               🗑️
             </button>
           </li>
         );
       })}
     </ul>
+
+    {toDelete && (
+      <div className="modal-backdrop" onClick={() => setToDelete(null)}>
+        <div className="modal card" onClick={(e) => e.stopPropagation()}>
+          <h2 className="section-title">Apagar medição?</h2>
+          <p className="muted">
+            {MEASUREMENT_TYPES[toDelete.type].label}:{" "}
+            <strong>
+              {formatValues(toDelete)} {MEASUREMENT_TYPES[toDelete.type].unit}
+            </strong>
+            <br />
+            {toDelete.date.toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}
+          </p>
+          <p className="muted">Essa ação não pode ser desfeita.</p>
+          <button className="btn-danger" onClick={confirmDelete}>Apagar</button>
+          <button className="btn-ghost" onClick={() => setToDelete(null)}>Cancelar</button>
+        </div>
+      </div>
+    )}
+    </>
   );
 }

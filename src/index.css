@@ -286,3 +286,12 @@ textarea:focus {
 .bmi-label.out-of-range {
   color: var(--danger);
 }
+
+.btn-danger {
+  width: 100%;
+  padding: 14px;
+  border-radius: 10px;
+  font-weight: 600;
+  background: var(--danger);
+  color: var(--primary-text);
+}
