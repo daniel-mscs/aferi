@@ -39,7 +39,10 @@ export default function Dashboard() {
 
       <section className="card">
         <h2 className="section-title">Histórico</h2>
+        <section className="card">
+        <h2 className="section-title">Histórico</h2>
         <MeasurementList measurements={measurements} onDelete={deleteMeasurement} />
+      </section>
       </section>
     </div>
   );

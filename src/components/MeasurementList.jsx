@@ -15,7 +15,7 @@ function getStatus(m, config) {
 }
 
 export default function MeasurementList({ measurements, onDelete }) {
-  if (measurements.length === 0) return <p>Nenhuma medição ainda.</p>;
+  if (measurements.length === 0) return <p className="muted">Nenhuma medição ainda.</p>;
 
   const handleDelete = (id) => {
     if (confirm("Apagar esta medição?")) onDelete(id);
