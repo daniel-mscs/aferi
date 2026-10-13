@@ -1,16 +1,12 @@
 import { useAuth } from "./contexts/AuthContext";
 import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
 
 export default function App() {
-  const { user, loading, logout } = useAuth();
+  const { user, loading } = useAuth();
 
   if (loading) return <p>Carregando...</p>;
   if (!user) return <Login />;
 
-  return (
-    <div style={{ textAlign: "center", marginTop: "30vh" }}>
-      <h2>Olá, {user.displayName} 👋</h2>
-      <button onClick={logout}>Sair</button>
-    </div>
-  );
+  return <Dashboard />;
 }
