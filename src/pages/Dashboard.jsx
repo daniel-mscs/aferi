@@ -1,10 +1,11 @@
 import { useAuth } from "../contexts/AuthContext";
 import { useMeasurements } from "../hooks/useMeasurements";
 import MeasurementForm from "../components/MeasurementForm";
+import MeasurementList from "../components/MeasurementList";
 
 export default function Dashboard() {
   const { user, logout } = useAuth();
-  const { measurements, addMeasurement } = useMeasurements();
+  const { measurements, addMeasurement, deleteMeasurement } = useMeasurements();
 
   return (
     <div style={{ maxWidth: 480, margin: "0 auto", padding: 16 }}>
@@ -15,7 +16,7 @@ export default function Dashboard() {
 
       <MeasurementForm onSave={addMeasurement} />
 
-      <p>{measurements.length} medições registradas</p>
+      <MeasurementList measurements={measurements} onDelete={deleteMeasurement} />
     </div>
   );
 }
