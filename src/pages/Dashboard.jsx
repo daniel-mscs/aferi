@@ -37,7 +37,10 @@ export default function Dashboard() {
       <MeasurementChart measurements={measurements} type={chartType} />
       </section>
 
-      <MeasurementList measurements={measurements} onDelete={deleteMeasurement} />
+      <section className="card">
+        <h2 className="section-title">Histórico</h2>
+        <MeasurementList measurements={measurements} onDelete={deleteMeasurement} />
+      </section>
     </div>
   );
 }

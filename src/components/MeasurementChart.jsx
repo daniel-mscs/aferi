@@ -47,7 +47,10 @@ export default function MeasurementChart({ measurements, type }) {
         <CartesianGrid strokeDasharray="3 3" stroke="#333" />
         <XAxis dataKey="date" stroke="#888" />
         <YAxis stroke="#888" domain={[yMin, yMax]} />
-        <Tooltip />
+        <Tooltip
+          contentStyle={{ background: "#22262e", border: "1px solid #2c313a", borderRadius: 10 }}
+          labelStyle={{ color: "#8b919c" }}
+        />
 
         {config.reference &&
           config.fields.map((field) => (

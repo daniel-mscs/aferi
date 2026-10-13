@@ -138,3 +138,52 @@ textarea:focus {
 .chart-select {
   margin-bottom: 12px;
 }
+
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.history-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.history-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.history-label {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.history-value {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.history-value small {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.history-value.in-range {
+  color: var(--primary);
+}
+
+.history-value.out-of-range {
+  color: var(--danger);
+}
+
+.history-note {
+  font-size: 14px;
+  margin-top: 4px;
+}

@@ -5,6 +5,15 @@ function formatValues(m) {
   return m.values.value;
 }
 
+function getStatus(m, config) {
+  if (!config.reference) return "";
+  const outOfRange = config.fields.some((f) => {
+    const { min, max } = config.reference[f];
+    return m.values[f] < min || m.values[f] > max;
+  });
+  return outOfRange ? "out-of-range" : "in-range";
+}
+
 export default function MeasurementList({ measurements, onDelete }) {
   if (measurements.length === 0) return <p>Nenhuma medição ainda.</p>;
 
@@ -13,16 +22,25 @@ export default function MeasurementList({ measurements, onDelete }) {
   };
 
   return (
-    <ul>
+    <ul className="history">
       {measurements.map((m) => {
         const config = MEASUREMENT_TYPES[m.type];
+        const status = getStatus(m, config);
         return (
-          <li key={m.id}>
-            <strong>{config.label}:</strong> {formatValues(m)} {config.unit}
-            <br />
-            <small>{m.date.toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}</small>
-            {m.note && <p>{m.note}</p>}
-            <button onClick={() => handleDelete(m.id)}>Apagar</button>
+          <li key={m.id} className="history-item">
+            <div className="history-main">
+              <span className="history-label">{config.label}</span>
+              <span className={`history-value ${status}`}>
+                {formatValues(m)} <small>{config.unit}</small>
+              </span>
+              <span className="muted">
+                {m.date.toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}
+              </span>
+              {m.note && <p className="history-note">{m.note}</p>}
+            </div>
+            <button className="btn-ghost" onClick={() => handleDelete(m.id)} aria-label="Apagar">
+              🗑️
+            </button>
           </li>
         );
       })}
