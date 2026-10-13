@@ -5,6 +5,12 @@ import App from './App.jsx'
 import { AuthProvider } from './contexts/AuthContext.jsx'
 import { Toaster } from 'sonner'
 
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault()
+  window.__installPrompt = e
+  window.dispatchEvent(new Event('installprompt-ready'))
+})
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <AuthProvider>

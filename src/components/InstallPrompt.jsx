@@ -22,40 +22,31 @@ function wasDismissed() {
 }
 
 export default function InstallPrompt() {
-  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [deferredPrompt, setDeferredPrompt] = useState(() => window.__installPrompt ?? null);
   const [show, setShow] = useState(false);
-  const [ios, setIos] = useState(false);
+  const [installed, setInstalled] = useState(isStandalone());
+  const ios = isIOS();
 
   useEffect(() => {
-    if (isStandalone()) return;
+    if (installed) return;
 
-    if (isIOS()) {
-      setIos(true);
-      if (!wasDismissed()) {
-        const timer = setTimeout(() => setShow(true), 3000);
-        return () => clearTimeout(timer);
-      }
-      return;
-    }
-
-    const handler = (e) => {
-      e.preventDefault();
-      setDeferredPrompt(e);
-      if (!wasDismissed()) setShow(true);
-    };
-
-    const installed = () => {
-      setDeferredPrompt(null);
+    const onReady = () => setDeferredPrompt(window.__installPrompt);
+    const onInstalled = () => {
+      setInstalled(true);
       setShow(false);
     };
 
-    window.addEventListener("beforeinstallprompt", handler);
-    window.addEventListener("appinstalled", installed);
+    window.addEventListener("installprompt-ready", onReady);
+    window.addEventListener("appinstalled", onInstalled);
+
+    const timer = wasDismissed() ? null : setTimeout(() => setShow(true), 2000);
+
     return () => {
-      window.removeEventListener("beforeinstallprompt", handler);
-      window.removeEventListener("appinstalled", installed);
+      window.removeEventListener("installprompt-ready", onReady);
+      window.removeEventListener("appinstalled", onInstalled);
+      clearTimeout(timer);
     };
-  }, []);
+  }, [installed]);
 
   const dismiss = () => {
     try {
@@ -67,12 +58,12 @@ export default function InstallPrompt() {
   const install = async () => {
     deferredPrompt.prompt();
     await deferredPrompt.userChoice;
+    window.__installPrompt = null;
     setDeferredPrompt(null);
     setShow(false);
   };
 
-  const canInstall = ios || deferredPrompt;
-  if (!canInstall) return null;
+  if (installed) return null;
 
   return (
     <>
@@ -89,7 +80,12 @@ export default function InstallPrompt() {
               Acesse direto da tela inicial, em tela cheia, como um app de verdade.
             </p>
 
-            {ios ? (
+            {deferredPrompt ? (
+              <>
+                <button className="btn-primary" onClick={install}>Instalar</button>
+                <button className="btn-ghost" onClick={dismiss}>Agora não</button>
+              </>
+            ) : ios ? (
               <>
                 <p className="muted">
                   Toque em <strong>Compartilhar</strong> (o quadrado com a seta pra cima) e depois em{" "}
@@ -99,8 +95,11 @@ export default function InstallPrompt() {
               </>
             ) : (
               <>
-                <button className="btn-primary" onClick={install}>Instalar</button>
-                <button className="btn-ghost" onClick={dismiss}>Agora não</button>
+                <p className="muted">
+                  Toque no menu <strong>⋮</strong> do navegador e depois em{" "}
+                  <strong>Instalar app</strong> ou <strong>Adicionar à tela inicial</strong>.
+                </p>
+                <button className="btn-primary" onClick={dismiss}>Entendi</button>
               </>
             )}
           </div>
