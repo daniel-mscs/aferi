@@ -17,7 +17,7 @@ export default function BuyMeCoffee() {
   return (
     <>
       <button className="coffee-btn" onClick={() => setOpen(true)}>
-        ☕ Me paga um café
+        ☕ Me paga um café?
       </button>
 
       {open && (
