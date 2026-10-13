@@ -56,6 +56,9 @@ export default function Dashboard() {
         <section className="card">
         <h2 className="section-title">Histórico</h2>
         <MeasurementList measurements={measurements} onDelete={deleteMeasurement} />
+        <p className="muted disclaimer">
+          As dicas são orientações gerais e não substituem avaliação médica. Em emergência, ligue 192 (SAMU).
+        </p>
       </section>
 
       <BuyMeCoffee />

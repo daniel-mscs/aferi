@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { MEASUREMENT_TYPES } from "../constants/measurements";
+import { getTip } from "../constants/tips";
 
 function formatValues(m) {
   if (m.type === "pressao") return `${m.values.systolic}/${m.values.diastolic}`;
@@ -31,6 +32,7 @@ export default function MeasurementList({ measurements, onDelete }) {
       {measurements.map((m) => {
         const config = MEASUREMENT_TYPES[m.type];
         const status = getStatus(m, config);
+        const tip = getTip(m);
         return (
           <li key={m.id} className="history-item">
             <div className="history-main">
@@ -42,6 +44,7 @@ export default function MeasurementList({ measurements, onDelete }) {
                 {m.date.toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}
               </span>
               {m.note && <p className="history-note">{m.note}</p>}
+              {tip && <p className={`tip tip-${tip.level}`}>{tip.text}</p>}
             </div>
             <button className="btn-ghost" onClick={() => setToDelete(m)} aria-label="Apagar">
               🗑️
