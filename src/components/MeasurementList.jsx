@@ -5,6 +5,7 @@ import {
   getReference,
   calcBMI,
   classifyBMI,
+  getStatus,
 } from "../constants/measurements";
 import { getTip } from "../constants/tips";
 import MeasurementForm from "./MeasurementForm";
@@ -14,19 +15,6 @@ function formatValues(m) {
   return m.values.value;
 }
 
-function getStatus(m, config, profile) {
-  if (m.type === "peso") {
-    const bmi = calcBMI(m.values.value, profile?.height);
-    return bmi ? classifyBMI(bmi).status : "";
-  }
-  const reference = getReference(m.type, profile, m.context);
-  if (!reference) return "";
-  const outOfRange = config.fields.some((f) => {
-    const { min, max } = reference[f];
-    return m.values[f] < min || m.values[f] > max;
-  });
-  return outOfRange ? "out-of-range" : "in-range";
-}
 
 export default function MeasurementList({ measurements, onDelete, onUpdate, profile }) {
   const [toDelete, setToDelete] = useState(null);

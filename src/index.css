@@ -436,3 +436,42 @@ textarea:focus {
   overflow-y: auto;
   text-align: left;
 }
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.summary-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.summary-value {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.summary-value small {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.summary-value.in-range {
+  color: var(--primary);
+}
+
+.summary-value.out-of-range {
+  color: var(--danger);
+}
+
+.summary-avg {
+  font-size: 12px;
+}

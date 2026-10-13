@@ -8,6 +8,7 @@ import InstallPrompt from "../components/InstallPrompt";
 import RangesSettings from "../components/RangesSettings";
 import ExportReport from "../components/ExportReport";
 import DeleteAccount from "../components/DeleteAccount";
+import SummaryCards from "../components/SummaryCards";
 import { useProfile } from "../hooks/useProfile";
 import { useMeasurements } from "../hooks/useMeasurements";
 import MeasurementForm from "../components/MeasurementForm";
@@ -41,6 +42,8 @@ export default function Dashboard() {
         </div>
         <button className="btn-ghost" onClick={logout}>Sair</button>
       </header>
+
+      <SummaryCards measurements={measurements} profile={profile} />
 
       <section className="card">
         <h2 className="section-title">Nova medição</h2>

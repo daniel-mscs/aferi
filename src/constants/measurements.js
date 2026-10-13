@@ -55,3 +55,17 @@ export const GLUCOSE_CONTEXTS = {
   pos: { label: "Pós-refeição", reference: { value: { min: 70, max: 139 } } },
   aleatoria: { label: "Aleatória", reference: { value: { min: 70, max: 139 } } },
 };
+
+export function getStatus(m, config, profile) {
+  if (m.type === "peso") {
+    const bmi = calcBMI(m.values.value, profile?.height);
+    return bmi ? classifyBMI(bmi).status : "";
+  }
+  const reference = getReference(m.type, profile, m.context);
+  if (!reference) return "";
+  const outOfRange = config.fields.some((f) => {
+    const { min, max } = reference[f];
+    return m.values[f] < min || m.values[f] > max;
+  });
+  return outOfRange ? "out-of-range" : "in-range";
+}
