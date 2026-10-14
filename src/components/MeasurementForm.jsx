@@ -119,6 +119,11 @@ export default function MeasurementForm({ onSave, initial, onCancel }) {
         type="datetime-local"
         value={date}
         onChange={(e) => setDate(e.target.value)}
+        onClick={(e) => {
+          try {
+            e.currentTarget.showPicker();
+          } catch {}
+        }}
         max={nowLocal()}
         required
       />
