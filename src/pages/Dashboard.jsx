@@ -26,7 +26,8 @@ export default function Dashboard() {
   const [historyFilter, setHistoryFilter] = useState("todos");
 
   const fullName = profile?.name || user.displayName || user.email?.split("@")[0] || "";
-  const firstName = fullName.split(" ")[0];
+  const rawFirst = fullName.split(" ")[0];
+  const firstName = rawFirst.charAt(0).toUpperCase() + rawFirst.slice(1);
 
   const filteredMeasurements =
     historyFilter === "todos"
