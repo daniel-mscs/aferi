@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { MEASUREMENT_TYPES, GLUCOSE_CONTEXTS } from "../constants/measurements";
+import { useProfile } from "../hooks/useProfile";
+import { useMeasurements } from "../hooks/useMeasurements";
+import MeasurementForm from "../components/MeasurementForm";
+import MeasurementList from "../components/MeasurementList";
 import MeasurementChart from "../components/MeasurementChart";
 import BuyMeCoffee from "../components/BuyMeCoffee";
 import BMICard from "../components/BMICard";
@@ -9,20 +13,20 @@ import RangesSettings from "../components/RangesSettings";
 import ExportReport from "../components/ExportReport";
 import DeleteAccount from "../components/DeleteAccount";
 import SummaryCards from "../components/SummaryCards";
-import { useProfile } from "../hooks/useProfile";
-import { useMeasurements } from "../hooks/useMeasurements";
-import MeasurementForm from "../components/MeasurementForm";
-import MeasurementList from "../components/MeasurementList";
+import NameEditor from "../components/NameEditor";
 
 export default function Dashboard() {
   const { user, logout } = useAuth();
-  const firstName = (user.displayName || user.email?.split("@")[0] || "").split(" ")[0];
   const { measurements, addMeasurement, deleteMeasurement, updateMeasurement } = useMeasurements();
+  const { profile, updateProfile } = useProfile();
+
   const [chartType, setChartType] = useState("glicemia");
   const [chartContext, setChartContext] = useState("jejum");
   const [chartPeriod, setChartPeriod] = useState(30);
-  const { profile, updateProfile } = useProfile();
   const [historyFilter, setHistoryFilter] = useState("todos");
+
+  const fullName = profile?.name || user.displayName || user.email?.split("@")[0] || "";
+  const firstName = fullName.split(" ")[0];
 
   const filteredMeasurements =
     historyFilter === "todos"
@@ -39,7 +43,11 @@ export default function Dashboard() {
       <header className="app-header">
         <div>
           <h1 className="logo">Aferi</h1>
-          <span className="muted">Olá, {firstName} 👋</span>
+          <NameEditor
+            currentName={firstName}
+            onSave={(name) => updateProfile({ name })}
+            askIfEmpty={!!profile && !profile.name && !user.displayName}
+          />
         </div>
         <button className="btn-ghost" onClick={logout}>Sair</button>
       </header>
@@ -61,62 +69,60 @@ export default function Dashboard() {
       </section>
 
       <section className="card">
-      <h2 className="section-title">Evolução</h2>
-      <div className="chips">
-        {Object.entries(MEASUREMENT_TYPES).map(([key, t]) => (
-          <button
-            key={key}
-            className={`chip ${chartType === key ? "active" : ""}`}
-            onClick={() => setChartType(key)}
-          >
-            {t.short ?? t.label}
-          </button>
-        ))}
-      </div>
+        <h2 className="section-title">Evolução</h2>
 
-      {chartType === "glicemia" && (
         <div className="chips">
-          {Object.entries(GLUCOSE_CONTEXTS).map(([key, c]) => (
+          {Object.entries(MEASUREMENT_TYPES).map(([key, t]) => (
             <button
               key={key}
-              className={`chip ${chartContext === key ? "active" : ""}`}
-              onClick={() => setChartContext(key)}
+              className={`chip ${chartType === key ? "active" : ""}`}
+              onClick={() => setChartType(key)}
             >
-              {c.label}
+              {t.short ?? t.label}
             </button>
           ))}
         </div>
-      )}
-      <div className="chips">
-        {[[7, "7 dias"], [30, "30 dias"], [90, "90 dias"], [null, "Tudo"]].map(([value, label]) => (
-          <button
-            key={label}
-            className={`chip ${chartPeriod === value ? "active" : ""}`}
-            onClick={() => setChartPeriod(value)}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
-      <MeasurementChart
-        measurements={measurements}
-        type={chartType}
-        profile={profile}
-        context={chartContext}
-        days={chartPeriod}
-      />
-      <RangesSettings profile={profile} onSave={(ranges) => updateProfile({ ranges })} />
+
+        {chartType === "glicemia" && (
+          <div className="chips">
+            {Object.entries(GLUCOSE_CONTEXTS).map(([key, c]) => (
+              <button
+                key={key}
+                className={`chip ${chartContext === key ? "active" : ""}`}
+                onClick={() => setChartContext(key)}
+              >
+                {c.label}
+              </button>
+            ))}
+          </div>
+        )}
+
+        <div className="chips">
+          {[[7, "7 dias"], [30, "30 dias"], [90, "90 dias"], [null, "Tudo"]].map(([value, label]) => (
+            <button
+              key={label}
+              className={`chip ${chartPeriod === value ? "active" : ""}`}
+              onClick={() => setChartPeriod(value)}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+
+        <MeasurementChart
+          measurements={measurements}
+          type={chartType}
+          profile={profile}
+          context={chartContext}
+          days={chartPeriod}
+        />
+        <RangesSettings profile={profile} onSave={(ranges) => updateProfile({ ranges })} />
       </section>
 
       <section className="card">
         <h2 className="section-title">Histórico</h2>
-        <ExportReport
-          measurements={measurements}
-          profile={profile}
-          userName={user.displayName || user.email}
-        />
-        <section className="card">
-        <h2 className="section-title">Histórico</h2>
+        <ExportReport measurements={measurements} profile={profile} userName={fullName} />
+
         <div className="chips">
           {filterOptions.map(([key, label]) => (
             <button
@@ -128,9 +134,16 @@ export default function Dashboard() {
             </button>
           ))}
         </div>
-        <MeasurementList measurements={filteredMeasurements} onDelete={deleteMeasurement} onUpdate={updateMeasurement} profile={profile} />
+
+        <MeasurementList
+          measurements={filteredMeasurements}
+          onDelete={deleteMeasurement}
+          onUpdate={updateMeasurement}
+          profile={profile}
+        />
         <p className="muted disclaimer">
-          Uso destinado a adultos. As dicas são orientações gerais e não substituem avaliação médica. Em emergência, ligue 192 (SAMU).
+          Uso destinado a adultos. As dicas são orientações gerais e não substituem avaliação médica. Em
+          emergência, ligue 192 (SAMU).
         </p>
       </section>
 
@@ -144,7 +157,6 @@ export default function Dashboard() {
 
       <BuyMeCoffee />
       <InstallPrompt />
-      </section>
     </div>
   );
 }
